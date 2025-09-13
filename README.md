@@ -1,1 +1,2 @@
 # SkyFitnessPro
+# React + TypeScript + Vite
