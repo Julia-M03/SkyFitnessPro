@@ -10,7 +10,6 @@ import { Link } from "react-router-dom"
 import { useNavigateFaraway } from "../../hooks/useNavigateFaraway"
 import { getActionTextFromProgress, getRate } from "../../utils/progress"
 import type { CourseType, KeysType } from "../../types/types"
-
 import { coursesAPI } from "../../api/coursesApi"
 
 

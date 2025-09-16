@@ -1,22 +1,16 @@
 import { createContext, ReactNode, useContext, useState } from "react"
-import { User } from "firebase/auth"
-
 
 /* interfaces */
-
 interface UserType {
-  uid:    string
-  email:  string | null
-  tokens: {
-    access:  string
-    refresh: string
-  }
+  uid:   string
+  email: string | null
+  token: string
 }
 
 export interface UserContextValue extends UserType {
   isAuthenticated: () => boolean
-  save:            (userInfo: User) => void
-  clear:           () => void
+  save: (token: string, uid: string, email: string) => void
+  clear: () => void
 }
 
 interface Props {
@@ -24,65 +18,82 @@ interface Props {
 }
 
 /* context */
-
 const UserContext = createContext<UserContextValue | undefined>(undefined)
 
 /* static methods */
+function read(): UserType | null {
+  try {
+    const token = localStorage.getItem('authToken')
+    const uid   = localStorage.getItem('userId')
+    const email = localStorage.getItem('userEmail')
 
-function read() {
-  let data: User | string | null = localStorage.getItem("userInfo")
+    if (!token || !email) return null
 
-  if (data)
-    data = JSON.parse(data)
-
-  if (!data || typeof data !== "object")
-    return {}
-
-  const userInfo: UserType = {
-    uid:    data.uid,
-    email:  data.email,
-    tokens: {
-      access:  data.stsTokenManager.accessToken,
-      refresh: data.stsTokenManager.refreshToken,
-    },
+    return {
+      uid:   uid,
+      email: email,
+      token: token,
+    }
+  } catch (error) {
+    console.error("Error reading user info from storage:", error)
+    return null
   }
-
-  return userInfo
 }
 
 /* provider */
-
 export function UserProvider({ children }: Props) {
-  const [data, setData] = useState<UserType | {}>(read())
+  const [data, setData] = useState<UserType | null>(read())
 
-  function isAuthenticated() {
-    return Boolean(data && data.email)
+  function isAuthenticated(): boolean {
+    return Boolean(data && data.token)
   }
 
-  function save(userInfo: User) {
-    localStorage.setItem("userInfo", JSON.stringify(userInfo))
+  function save(token: string, uid: string, email: string): void {
+    localStorage.setItem('authToken', token)
+    localStorage.setItem('userId',    uid)
+    localStorage.setItem('userEmail', email)
 
-    setData(userInfo)
+    const userData: UserType = {
+      uid:   uid,
+      email: email,
+      token: token,
+    }
+
+    setData(userData)
   }
 
-  function clear() {
-    localStorage.removeItem("userInfo")
+  function clear(): void {
+    localStorage.removeItem('authToken')
+    localStorage.removeItem('userId')
+    localStorage.removeItem('userEmail')
+    setData(null)
+  }
 
-    setData("")
+  // Создаем безопасное значение для контекста
+  const contextValue: UserContextValue = {
+    uid: data?.uid || "",
+    email: data?.email || null,
+    token: data?.token || "",
+    isAuthenticated,
+    save,
+    clear,
   }
 
   return (
-    <UserContext.Provider value={{ ...data, isAuthenticated, save, clear }}>{children}</UserContext.Provider>
+    <UserContext.Provider value={contextValue}>
+      {children}
+    </UserContext.Provider>
   )
 }
 
 /* hooks */
-
-export function useUserContext() {
+// eslint-disable-next-line react-refresh/only-export-components
+export function useUserContext(): UserContextValue {
   const context = useContext(UserContext)
 
-  if (!context)
-    throw new Error("useCurrentTrack must be used within UserProvider")
+  if (!context) {
+    throw new Error("useUserContext must be used within UserProvider")
+  }
 
   return context
 }

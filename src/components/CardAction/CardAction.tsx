@@ -20,7 +20,7 @@ function CardAction({ courseId, userId, action }: Props) {
     else
       coursesAPI.removeUserCourse(userId, courseId)
 
-    window.location.reload()
+    // window.location.reload() перезагрузка
   }
 
   return (

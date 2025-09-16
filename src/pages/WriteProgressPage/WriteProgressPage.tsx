@@ -4,9 +4,9 @@ import Button from "../../components/Button/Button"
 import React, { useEffect, useState } from "react"
 import { useLoaderData, useNavigate, useParams } from "react-router-dom"
 import { useUserContext } from "../../context/UserContext/UserContext"
-import { ExercisesType, WorkoutType } from "../../types/types"
-import pages from "../../data/pages"
+import { CourseType, ExercisesType, WorkoutType } from "../../types/types"
 import { coursesAPI } from "../../api/coursesApi"
+import pages from "../../data/pages"
 
 
 export default function WriteProgressPage() {
@@ -15,6 +15,7 @@ export default function WriteProgressPage() {
   const [exercises, setExercises] = useState<ExercisesType>([])
   const userContext = useUserContext()
   const navigate = useNavigate()
+
 
   useEffect(() => {
     if (workoutData && workoutData.exercises)
@@ -37,7 +38,7 @@ export default function WriteProgressPage() {
       progress: exercise.progress || 0,
     })))
 
-    navigate(pages.PROFILE)
+    navigate(`/workout/${courseId}/${workoutId}/`, { replace: true })
   }
 
   return (

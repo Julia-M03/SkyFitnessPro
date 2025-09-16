@@ -11,9 +11,8 @@ import pages from "../../data/pages"
 import { coursesAPI } from "../../api/coursesApi"
 import Footer from "../../components/Footer/Footer"
 
-
-export default function CoursePage() {
-  const { id } = useParams()
+function CoursePage() {
+  useParams()
   const courseData = useLoaderData() as CourseType
   const userContext = useUserContext()
   const navigate = useNavigateFaraway()
@@ -24,15 +23,17 @@ export default function CoursePage() {
   function doExercises() {
     if (courseData.progress >= 100)
       coursesAPI.repeatFromBeginUserCourse(userContext.uid, courseData._id)
+    else
+      coursesAPI.removeUserCourse(userContext.uid, courseData._id)
 
-    navigate(`choose/${courseData._id}`)
+    // navigate(`choose/${courseData._id}` )
   }
 
   async function handleSubmit() {
     if (!userContext.isAuthenticated())
       navigate(pages.SIGN_IN)
     else if (!courseData.isAdded)
-      await coursesAPI.addUserCourse(userContext.uid, id, courseData)
+      await coursesAPI.addUserCourse(userContext.uid, courseData._id)
     else
       doExercises()
   }
@@ -47,7 +48,7 @@ export default function CoursePage() {
     else if (courseData.progress > 0)
       return "Продолжить курс"
     else
-      return "Начать курс"
+      return "Удалить курс"
   }
 
   return (
@@ -92,7 +93,7 @@ export default function CoursePage() {
         <section className={twMerge(sharedStyles.presentationNewLife, sharedStyles.shadowedBlock, sharedStyles.scaledBlock)}>
           <div className={sharedStyles.presentationNewLifeLeft}>
             <h2 className={sharedStyles.presentationNewLifeTitle}>Начните путь<br />к новому телу</h2>
-            <ul className={sharedStyles.presentationNewLifeLeft}>
+            <ul className={sharedStyles.presentationNewLifeList}>
               <li className={sharedStyles.presentationNewLifeLeftItem}>проработка всех групп мышц</li>
               <li className={sharedStyles.presentationNewLifeLeftItem}>тренировка суставов</li>
               <li className={sharedStyles.presentationNewLifeLeftItem}>улучшение циркуляции крови</li>
@@ -112,7 +113,7 @@ export default function CoursePage() {
           <img className={sharedStyles.presentationNewLifeMan} src="/img/runner.png" alt="runner" />
         </section>
 
-        <img className={twMerge("presentationNewLifeMan max-w-[482px] max-h-[456px] absolute m-auto right-[9px] main:hidden top-[-265px]", sharedStyles.headerProfileBlockSmall)} src="/img/runner_small.svg" alt="runner" />
+        <img className={twMerge(sharedStyles.presentationNewLifeManSmall, sharedStyles.headerProfileBlockSmall)} src="/img/runner_small.svg" alt="runner" />
       </div>
 
       <Footer />
@@ -121,3 +122,5 @@ export default function CoursePage() {
     </div>
   )
 }
+
+export default CoursePage

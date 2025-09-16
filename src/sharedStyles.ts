@@ -91,7 +91,7 @@ export const sharedStyles = {
   presentationGoals: "presentationGoals flex flex-wrap gap-x-31 gap-y-6 rounded-[28px] bg-good p-[30px] text-lg/5 main:gap-y-[34px] main:text-2xl/[26px]",
   presentationGoal: "presentationGoal flex h-13/2 w-[284px] items-center gap-2",
   presentationGoalStar: "presentationGoalStar h-13/2 w-[26px]",
-  presentationNewLifeSection: "presentationNewLifeSection relative mx-auto mt-[116px] w-[482px] main:mt-[42px] main:w-[1160px]",
+  presentationNewLifeSection: "presentationNewLifeSection relative mx-auto mt-[116px] w-full max-w-[482px] main:mx-center main:mt-[42px] main:w-[1160px]",
   presentationNewLife: "presentationNewLife presentationNewLife relative z-10 m-auto w-[343px] rounded-[30px] bg-white p-[30px] main:z-0 main:mt-0 main:w-[1160px] main:p-10",
   presentationNewLifeTitle: "presentationNewLifeTitle mb-9 text-[32px]/9 font-medium main:mb-10 main:text-6xl",
   presentationNewLifeLeft: "presentationNewLifeLeft relative z-10 list-inside main:w-[448px]",
@@ -99,7 +99,7 @@ export const sharedStyles = {
   presentationNewLifeRight: "presentationNewLifeRight absolute bottom-0 right-0 hidden h-full w-full overflow-hidden main:block",
   presentationNewLifeLines: "presentationNewLifeLines absolute bottom-[-58px] right-[30px] h-[530px] w-[635px]",
   presentationNewLifeMan: "presentationNewLifeMan absolute bottom-[9px] right-[9px] hidden h-[570px] w-[550px] main:block",
-  presentationNewLifeManSmall: "presentationNewLifeManSmall presentationNewLifeMan absolute right-[9px] top-[-265px] m-auto max-h-[456px] max-w-[482px] main:hidden",
+  presentationNewLifeManSmall: "presentationNewLifeManSmall absolute top-[-265px] m-auto max-h-[456px] max-w-[482px] main:hidden",
 
   /* user menu */
 
@@ -139,7 +139,6 @@ export const sharedStyles = {
   /* progress */
 
   progress: "progress flex flex-col gap-[10px]",
-  progressText: "progressText",
   progressBar: "progressBar relative h-[6px]",
   progressBarBack: "progressBarBack absolute h-[6px] w-full rounded-[50px] bg-light-bg",
   progressBarFront: "progressBarFront absolute h-[6px] w-[120px] rounded-[50px] bg-work",

@@ -54,6 +54,7 @@ export default {
       },
       spacing: {
         "31": "124px",
+        "center": "calc(50% - 580px)",
       },
     },
   },

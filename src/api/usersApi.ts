@@ -6,7 +6,7 @@ import { auth } from "./firebaseConfig"
 export const usersApi = {
   async create(email: string, password: string, name: string) {
     const signUp = await createUserWithEmailAndPassword(auth, email, password)
-    const user   = signUp.user
+    const user = signUp.user
 
     await updateProfile(user, { displayName: name })
     await signOut(auth)
@@ -16,7 +16,7 @@ export const usersApi = {
 
   async auth(email: string, password: string) {
     const signIn = await signInWithEmailAndPassword(auth, email, password)
-    const user   = signIn.user
+    const user = signIn.user
 
     return user
   },

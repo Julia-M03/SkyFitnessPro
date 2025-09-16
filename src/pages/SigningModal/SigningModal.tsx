@@ -85,12 +85,11 @@ export default function SigningModal({ mode }: Props) {
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
 
-    debugger
     if (modalMode === "signIn") {
       try {
         const user = await usersApi.auth(formData.email, formData.password)
 
-        userContext.save(user)
+        userContext.save(user.accessToken, user.uid, user.email)
 
         navigate(pages.MAIN)
       } catch (error) {
@@ -135,7 +134,7 @@ export default function SigningModal({ mode }: Props) {
   )
 }
 
-function ModalContent({ mode, formData, setFormData, errorState, setErrorState, onSwitch, onChange }: ExtendedProps) {
+function ModalContent({ mode, formData, errorState, onSwitch, onChange }: ExtendedProps) {
   return (
     <div className={sharedStyles.modalFormInner}>
       <div className={sharedStyles.modalFormSubgroup}>
