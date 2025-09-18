@@ -1,72 +1,77 @@
-import { sharedStyles } from "../../sharedStyles"
-import { twMerge } from "tailwind-merge"
+import * as S from './Card.styled';
+import type { Course } from '../../sharesTypes/sharesTypes';
+import { getCourseImage } from '../../utils/getCourseImage/getCourseImage';
+import Progress from '../Progress/Progress';
+import { useNavigate } from 'react-router-dom';
 
-import Button from "../Button/Button"
-import CardAction from "../CardAction/CardAction"
-import Progress from "../Progress/Progress"
-import Tablet from "../Tablet/Tablet"
+type CardProps = {
+  course: Course;
+  isUserCourse: boolean;
+  onIconClick?: (courseId: string) => void;
+  percent?: number;
+  buttonText?: string;
+};
 
-import { Link } from "react-router-dom"
-import { useNavigateFaraway } from "../../hooks/useNavigateFaraway"
-import { getActionTextFromProgress, getRate } from "../../utils/progress"
-import type { CourseType, KeysType } from "../../types/types"
-import { coursesAPI } from "../../api/coursesApi"
-
-
-interface Props {
-  courseData: CourseType
-  userId:     string
-}
-
-export default function Card({ courseData, userId }: Props) {
-  const name = courseData.name
-  const link = `/courses/${courseData._id}`
-  const navigate = useNavigateFaraway()
-
-  async function handleSubmit() {
-    if (courseData.progress >= courseData.max)
-      coursesAPI.repeatFromBeginUserCourse(userId, courseData._id)
-
-    navigate(`choose/${courseData._id}`)
-  }
+const Card: React.FC<CardProps> = ({
+  course,
+  isUserCourse,
+  onIconClick,
+  percent = 0,
+  buttonText,
+}) => {
+  const navigate = useNavigate();
+  const {
+    _id,
+    nameEN,
+    nameRU,
+    durationInDays,
+    dailyDurationInMinutes,
+    difficulty,
+  } = course;
+  const srcPath = getCourseImage(nameEN);
 
   return (
-    <div className={twMerge(sharedStyles.card, sharedStyles.shadowedBlock, sharedStyles.scaledBlock)}>
-      <Link to={link}>
-        <div className={sharedStyles.cardPicture}>
-          <img className={twMerge(sharedStyles.cardInner, sharedStyles[(`card-${name}`) as KeysType])} src={`/img/${name}.jpeg`} alt={name} />
-        </div>
-      </Link>
+    <S.CourseCard>
+      <S.ImageWrapper>
+        <S.CardImg $src={`/${srcPath}.png`} />
+        <S.Icon
+          src={isUserCourse ? '/removeIcon.svg' : '/addIcon.svg'}
+          alt={isUserCourse ? 'Remove from favorites' : 'Add to favorites'}
+          onClick={() => onIconClick?.(_id)}
+        />
+      </S.ImageWrapper>
 
-      <CardAction courseId={courseData._id} userId={userId} action={courseData.isAdded ? "remove" : "add"} />
+      <S.CourseDiscription>
+        <S.Title>{nameRU}</S.Title>
+        <S.Duration>
+          <S.Badge>
+            <img src="/time.svg" alt="time icon" />
+            {durationInDays} дней
+          </S.Badge>
+          <S.Badge>
+            <img src="/calendar.svg" alt="calendar icon" />
+            {`${dailyDurationInMinutes.from}-${dailyDurationInMinutes.to}`}{' '}
+            мин/день
+          </S.Badge>
+        </S.Duration>
+        <S.Difficulty>
+          <S.Badge>
+            <img src="/difficulty.svg" alt="difficulty icon" />
+            {difficulty}
+          </S.Badge>
+        </S.Difficulty>
+        {isUserCourse && (
+          <>
+            <Progress percent={percent} />
 
-      <div className={sharedStyles.cardBlock}>
-        <div className={sharedStyles.cardContent}>
-          <Link className={sharedStyles.cardTitle} to={link}>{courseData.title}</Link>
+            <S.CourseButton onClick={() => navigate(`/course/${_id}/workouts`)}>
+              {buttonText}
+            </S.CourseButton>
+          </>
+        )}
+      </S.CourseDiscription>
+    </S.CourseCard>
+  );
+};
 
-          <div className={sharedStyles.cardTablets}>
-            <Tablet imgName="calendar">25 дней</Tablet>
-            <Tablet imgName="time">20-50 мин/день</Tablet>
-            <Tablet imgName="difficulty" difficulty={courseData.difficulty} />
-          </div>
-
-          {
-            userId && courseData.isAdded
-              && (
-                <Progress title="" progress={getRate(courseData.progress, courseData.max)} />
-              )
-          }
-        </div>
-
-        {
-          userId && courseData.isAdded
-            && (
-              <Button additionalClasses={sharedStyles.buttonWideWithFields} primary={true} onClick={handleSubmit}>
-                {getActionTextFromProgress(false, courseData.progress, courseData.max)}
-              </Button>
-            )
-        }
-      </div>
-    </div>
-  )
-}
+export default Card;

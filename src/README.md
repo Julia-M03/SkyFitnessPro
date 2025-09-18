@@ -1,2 +1,0 @@
-# SkyFitnessPro
-# React + TypeScript + Vite
